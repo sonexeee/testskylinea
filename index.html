@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SKYLINE - Emergency Help</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #4caf50, #ffeb3b);
+      color: #333;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-attachment: fixed;
+    }
+
+    /* Home Page UI with Modern Glassmorphism */
+    .home-page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+      text-align: center;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 50px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      color: white;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .home-page h1 {
+      font-size: 4rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .home-page p {
+      font-size: 1.6rem;
+      color: #ddd;
+      margin-bottom: 30px;
+    }
+
+    .button {
+      background-color: #4caf50;
+      padding: 18px 35px;
+      color: white;
+      font-size: 1.4rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+
+    /* Loading Animation */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 1s ease-out, visibility 1s ease-out;
+    }
+
+    .loading-spinner {
+      border: 10px solid #f3f3f3;
+      border-top: 10px solid #4caf50;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Main Content with Modern Glassmorphism */
+    .main-container {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 50px;
+      backdrop-filter: blur(25px);
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+      transform: scale(0.8);
+    }
+
+    .navbar {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      padding: 15px 25px;
+      font-size: 1.2rem;
+      background-color: #4caf50;
+      border-radius: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .navbar a:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+
+    /* New Sign Up and Login Buttons */
+    .navbar a.signup, .navbar a.login {
+      background-color: #2196f3; /* Blue for Sign Up and Login */
+    }
+
+    .navbar a.signup:hover, .navbar a.login:hover {
+      background-color: #1976d2; /* Darker blue on hover */
+    }
+
+    /* Location Confirmation Modal */
+    #location-confirmation {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      backdrop-filter: blur(15px);
+      animation: slideIn 0.5s ease-out;
+    }
+
+    #location-confirmation p {
+      font-size: 1.4rem;
+      margin-bottom: 25px;
+    }
+
+    #location-confirmation button {
+      background-color: #4caf50;
+      padding: 12px 22px;
+      color: white;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 10px;
+    }
+
+    #location-confirmation button:hover {
+      background-color: #45a049;
+    }
+
+    /* Slide-in effect */
+    @keyframes slideIn {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Error UI with Modern Glassmorphism */
+    #error-ui {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(244, 67, 54, 0.9);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+      animation: shakeError 0.5s ease-out;
+    }
+
+    @keyframes shakeError {
+      0% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      100% { transform: translateX(0); }
+    }
+
+    #error-ui p {
+      font-size: 1.3rem;
+      margin-bottom: 25px;
+    }
+
+    #error-ui button {
+      background-color: #ff5722;
+      padding: 12px 22px;
+      color: white;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #error-ui button:hover {
+      background-color: #e64a19;
+    }
+
+    /* Title Section with Transparent Background */
+    #title {
+      background: rgba(255, 255, 255, 0.2); /* Light transparent white background */
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    #title img {
+      max-width: 200px;
+      height: auto;
+    }
+
+    #title h1,
+    #title p {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Animation (Initially Hidden) -->
+  <div id="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Home Page UI -->
+  <div class="home-page" id="home-page">
+    <h1>Welcome to SKYLINE</h1>
+    <p>Your emergency services are just a click away.</p>
+    <button class="button" id="useServiceBtn">Use Our Service</button>
+  </div>
+
+  <!-- Main Content (Initially Hidden) -->
+  <div class="main-container" id="main-container">
+    <header id="title">
+      <img src="https://github.com/son2221/testskyline/blob/main/image%20(1).png?raw=true" alt="SKYLINE Logo">
+      <h1>SKYLINE</h1>
+      <p>Quick and Reliable Emergency Services</p>
+    </header>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+      <a href="#" class="signup">Sign Up</a>
+      <a href="#" class="login">Login</a>
+    </div>
+
+    <!-- Modal for Location Confirmation -->
+    <div id="location-confirmation">
+      <p>We need to access your location for emergency assistance. Do you allow this?</p>
+      <button onclick="confirmLocation()">Allow</button>
+      <button onclick="declineLocation()">Decline</button>
+    </div>
+
+    <!-- Error UI -->
+    <div id="error-ui">
+      <p>There was an issue with your request. Please try again later.</p>
+      <button onclick="closeError()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Simulate loading animation
+    setTimeout(function() {
+      document.getElementById("loading").style.opacity = 0;
+      document.getElementById("loading").style.visibility = "hidden";
+      document.getElementById("main-container").style.display = "flex";
+    }, 2000);
+
+    document.getElementById("useServiceBtn").addEventListener("click", function() {
+      document.getElementById("home-page").style.display = "none";
+      document.getElementById("main-container").style.display = "flex";
+    });
+
+    // Location confirmation functions
+    function confirmLocation() {
+      alert("Location confirmed!");
+      document.getElementById("location-confirmation").style.display = "none";
+    }
+
+    function declineLocation() {
+      alert("Location access denied.");
+      document.getElementById("location-confirmation").style.display = "none";
+    }
+
+    // Error UI functions
+    function showError() {
+      document.getElementById("error-ui").style.display = "block";
+    }
+
+    function closeError() {
+      document.getElementById("error-ui").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
+in
